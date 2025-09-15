@@ -1,0 +1,39 @@
+class Solution(object):
+    def spellchecker(self, wordlist, queries):
+        """
+        :type wordlist: List[str]
+        :type queries: List[str]
+        :rtype: List[str]
+        """
+        output = []
+        map = dict()
+        vaguemap = set()
+        caseInsensitive = {}
+        for word in wordlist:
+            newword = word.lower()
+            newword = newword.replace('e', 'a')
+            newword = newword.replace('i', 'a')
+            newword = newword.replace('o', 'a')
+            newword = newword.replace('u', 'a')
+            if not (newword.lower() in map):
+                map[newword.lower()] = word
+            vaguemap.add(word)
+            if not word.lower() in caseInsensitive:
+                caseInsensitive[word.lower()] = word
+        for word in queries:
+            if word in vaguemap:
+                output.append(word)
+                continue
+            if word.lower() in caseInsensitive:
+                output.append(caseInsensitive[word.lower()])
+                continue;
+            newword = word.lower()
+            newword = newword.replace('e', 'a')
+            newword = newword.replace('i', 'a')
+            newword = newword.replace('o', 'a')
+            newword = newword.replace('u', 'a')
+            if newword.lower() in map:
+                output.append(map[newword.lower()])
+            else:
+                output.append("")
+        return output
