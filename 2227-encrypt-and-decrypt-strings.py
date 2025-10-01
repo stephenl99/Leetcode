@@ -1,41 +1,27 @@
-class Encrypter(object):
-    def __init__(self, keys, values, dictionary):
-        """
-        :type keys: List[str]
-        :type values: List[str]
-        :type dictionary: List[str]
-        """
-        self.keys = keys
-        self.keyMap = {}
-        self.keys = []
-        self.valMap = defaultdict(list)
-        self.values = []
-        self.dictionary = defaultdict(int)
+class Encrypter:
+
+    def __init__(self, keys: List[str], values: List[str], dictionary: List[str]):
+        self.charToCodeMapping = {}
         for i in range(len(keys)):
-            self.keyMap[keys[i]] = i
-        self.values = values
-        for i in range(len(values)):
-            self.valMap[values[i]].append(i)
+            self.charToCodeMapping[keys[i]] = values[i]
+        self.encryptedPossible = defaultdict(int)
         for word in dictionary:
-            wo = self.encrypt(word)
-            self.dictionary[wo] += 1
-    def encrypt(self, word1):
-        """
-        :type word1: str
-        :rtype: str
-        """
-        word2 = ""
-        for i in range(len(word1)):
-            if word1[i] not in self.keyMap:
+            self.encryptedPossible[self.encrypt(word)] += 1
+
+
+    def encrypt(self, word1: str) -> str:
+        finalString = ""
+        for char in word1:
+            if char not in self.charToCodeMapping:
                 return ""
-            word2 += self.values[self.keyMap[word1[i]]]
-        return word2
-    def decrypt(self, word2):
-        """
-        :type word2: str
-        :rtype: int
-        """
-        return self.dictionary[word2]
+            finalString += self.charToCodeMapping[char]
+        return finalString
+
+
+
+    def decrypt(self, word2: str) -> int:
+        return self.encryptedPossible[word2]
+        
 
 
 # Your Encrypter object will be instantiated and called as such:
