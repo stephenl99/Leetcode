@@ -1,55 +1,60 @@
-class Pair {
-    public:
-    int val;
-    int playerId;
-    Pair(int val, int playerId) {
-        this->val = val;
-        this->playerId = playerId;
-    }
-    bool operator<(const Pair& other) const {
-        return this->val < other.val;
-    }
-};
+/**
+
+player_id -> score
+priority queue based on scores + access using player id
+
+Score struct:
+- score
+- player id
+
+
+**/
+
 class Leaderboard {
 public:
-    priority_queue<Pair> pq;
-    unordered_map<int, int> mapp;
-    Leaderboard() {
-
-    }
+    Leaderboard() {}
     
     void addScore(int playerId, int score) {
-        if (!mapp.contains(playerId)) {
-            mapp[playerId] = 0;
+        auto it = scores.find(playerId);
+        if (it != scores.end()) {
+            int before = it->second;
+            auto b_it = score_board.find(before);
+            if (b_it->second == 1) score_board.erase(b_it);
+            else --b_it->second;
+            scores[playerId] = score + before;
+            ++score_board[score + before];
+        } else {
+            scores[playerId] = score;
+            ++score_board[score];
         }
-        mapp[playerId] += score;
-        pq.push(Pair(mapp[playerId], playerId));
     }
     
     int top(int K) {
-        return compute(pq, mapp, K);
-    }
-
-    int compute(priority_queue<Pair> pq, unordered_map<int, int>& map, int k) {
-        int count = 0;
-        int total = 0;
-        unordered_set<int> seen;
-        while (count < k) {
-            Pair pair = pq.top();
-            pq.pop();
-            if (!seen.contains(pair.playerId) && mapp[pair.playerId] == pair.val) {
-                count++;
-                total += pair.val;
-                seen.insert(pair.playerId);
+        int result = 0;
+        for (auto it = score_board.rbegin(); it != score_board.rend(); ++it) {
+            if (it->second < K) {
+                result += it->second * it->first;
+                K -= it->second; 
+            } else {
+                result += K * it->first;
+                break;
             }
         }
-        return total;
+        return result;
     }
     
     void reset(int playerId) {
-        mapp[playerId] = 0;
-        pq.push(Pair(0, playerId));
+        auto it = scores.find(playerId);
+        int before = it->second;
+        scores.erase(it);
+        auto b_it = score_board.find(before);
+        if (b_it->second == 1) score_board.erase(b_it);
+        else --b_it->second;
     }
+
+private:
+    unordered_map<int, int> scores;
+    map<int, int> score_board;
 };
 
 /**
