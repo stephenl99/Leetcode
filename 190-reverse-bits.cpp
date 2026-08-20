@@ -1,12 +1,17 @@
 class Solution {
 public:
     int reverseBits(int n) {
-        string s = std::bitset<32>(n).to_string();
-        for (int i = 0; i < 16; i++) {
-            char temp = s[i];
-            s[i] = s[31 - i];
-            s[31 - i] = temp;
+        int res = 0;
+        int tempN = n;
+        int idx = 0;
+
+        for(int i = 0; i < 32; i++){
+            int bit = ((n & (1 << i)) > 0) ? 1 : 0;
+
+            if(bit == 1){
+                res = res | (1 << (32-i-1));
+            }
         }
-        return std::stoi(s, nullptr, 2);
+        return res;
     }
 };
