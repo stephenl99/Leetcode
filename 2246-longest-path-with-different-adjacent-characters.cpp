@@ -20,20 +20,22 @@ int best = 1;
         while (!q.empty()) {
             int i = q.front();
             q.pop();
-            priority_queue<int> pq;
             maxes[i] = 1;
+            int maxOne = -1;
+            int maxTwo = -1;
             for (int child : childrenMap[i]) {
                 if (s[child] != s[i]) {
                     maxes[i] = max(maxes[i], maxes[child] + 1);
-                    pq.push(maxes[child]);
+                    if (maxes[child] >= maxOne) {
+                        maxTwo = maxOne;
+                        maxOne = maxes[child];
+                    } else if (maxes[child] >= maxTwo) {
+                        maxTwo = maxes[child];
+                    }
                 }
             }
-            if (pq.size() >= 2) {
-                int a = pq.top();
-                pq.pop();
-                int b = pq.top();
-                pq.pop();
-                best = max(best, a + b + 1);
+            if (maxTwo >= 0) {
+                best = max(best, maxOne + maxTwo + 1);
             }
             if (parent[i] != -1) {
                 remainingChild[parent[i]] -= 1;
