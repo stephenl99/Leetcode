@@ -23,22 +23,17 @@ public:
     }
     
     int getValue(string formula) {
-        int a;
-        int b;
-        if (formula[1] - 'A' < 26 && formula[1] - 'A' >= 0) {
-            pair<int, int> coord = deparse(formula.substr(1, formula.find('+')));
-            a = sheet[coord.first][coord.second];
-        } else {
-            a = stoi(formula.substr(1, formula.find('+')));
-        }
-        int index = formula.find('+') + 1;
-        if (formula[index] - 'A' < 26 && formula[index] - 'A' >= 0) {
-            pair<int, int> coord = deparse(formula.substr(index));
-            b = sheet[coord.first][coord.second];
-        } else {
-            b = stoi(formula.substr(index));
-        }
+        int a = getInteger(formula.substr(1, formula.find('+')));
+        int b = getInteger(formula.substr(formula.find('+') + 1));
         return a + b;
+    }
+    int getInteger(string formula) {
+        if (formula[0] - 'A' < 26 && formula[0] - 'A' >= 0) {
+            pair<int, int> coord = deparse(formula);
+            return sheet[coord.first][coord.second];
+        } else {
+            return stoi(formula);
+        }
     }
 };
 
