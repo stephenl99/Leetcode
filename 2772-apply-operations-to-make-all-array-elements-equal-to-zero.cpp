@@ -5,7 +5,7 @@ public:
         for (int i = 0; i < nums.size(); i++) {
             if (nums[i] - curr < 0) {
                 return false;
-            } 
+            }
             nums[i] -= curr;
             curr += nums[i];
             if (i >= k - 1) {
