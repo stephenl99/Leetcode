@@ -3,33 +3,30 @@ public:
     vector<vector<char>> board;
     int n = 3;
     int N = n * n;
+    bool solved;
     vector<vector<int>> rows;
     vector<vector<int>> cols;
     vector<vector<int>> boxes;
-    bool solved;
 
     bool can_insert(int i, int row, int col) {
-        int idx = (row / n) * n + col / n;
+        int idx = (row / n) * n + (col / n);
         return rows[row][i] + cols[col][i] + boxes[idx][i] == 0;
     }
-
-    void insert_number(int i, int row, int col) {
-        int idx = (row / n) * n + col / n;
+    void insert(int i, int row, int col) {
+        int idx = (row / n) * n + (col / n);
         rows[row][i]++;
         cols[col][i]++;
         boxes[idx][i]++;
-        board[row][col] = (char) (i + '0');
+        board[row][col] = i + '0';
     }
-
-    void delete_number(int i, int row, int col) {
-        int idx = (row / n) * n + col / n;
+    void remove(int i, int row, int col) {
+        int idx = (row / n) * n + (col / n);
         rows[row][i]--;
         cols[col][i]--;
         boxes[idx][i]--;
         board[row][col] = '.';
     }
-
-    void next_numbers(int row, int col) {
+    void next(int row, int col) {
         if (row == N - 1 && col == N - 1) {
             solved = true;
         } else {
@@ -40,32 +37,30 @@ public:
             }
         }
     }
-
     void recurse(int row, int col) {
         if (board[row][col] == '.') {
             for (int i = 1; i < 10; i++) {
                 if (can_insert(i, row, col)) {
-                    insert_number(i, row, col);
-                    next_numbers(row, col);
+                    insert(i, row, col);
+                    next(row, col);
                     if (!solved) {
-                        delete_number(i, row, col);
+                        remove(i, row, col);
                     }
                 }
             }
         } else {
-            next_numbers(row, col);
+            next(row, col);
         }
     }
-
     void solveSudoku(vector<vector<char>>& board) {
         this->board = board;
-        this->rows = vector<vector<int>>(N, vector<int>(N + 1, 0));
-        this->cols = vector<vector<int>>(N, vector<int>(N + 1, 0));
-        this->boxes = vector<vector<int>>(N, vector<int>(N + 1, 0));
+        rows = vector<vector<int>>(N, vector<int>(N + 1, 0));
+        cols = vector<vector<int>>(N, vector<int>(N + 1, 0));
+        boxes = vector<vector<int>>(N, vector<int>(N + 1, 0));
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (board[i][j] != '.') {
-                    int idx = (i / n) * n + j / n;
+                    int idx = (i / n) * n + (j / n);
                     int d = board[i][j] - '0';
                     rows[i][d]++;
                     cols[j][d]++;
