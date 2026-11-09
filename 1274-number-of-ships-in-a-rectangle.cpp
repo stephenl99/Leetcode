@@ -9,7 +9,7 @@
 
 class Solution {
 public:
-    int helper(Sea sea, vector<int> bottomLeft, vector<int> topRight) {
+    int helper(Sea& sea, vector<int> bottomLeft, vector<int> topRight) {
         if (topRight[0] < bottomLeft[0] || topRight[1] < bottomLeft[1]) {
             return 0;
         }
