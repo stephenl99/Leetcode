@@ -2,49 +2,57 @@ class Solution {
 public:
     int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
         int n = grid.size();
-        int m = grid[0].size();
+        if(grid[0][0] == 1 || grid[n-1][n-1] == 1) return -1;
+        vector<vector<int>> disS(n , vector<int>(n , 1e9)) , disD(n , vector<int>(n, 1e9));
 
-        vector<pair<int, int>> dirs = {
-            {-1, -1}, {-1, 0}, {-1, 1},
-            {0, -1},           {0, 1},
-            {1, -1},  {1, 0},  {1, 1}
+        queue<pair<int,int>> qS, qD;
+
+        qS.push({0,0});
+        disS[0][0] = 1;
+
+        vector<vector<int>> dir = {
+            {-1,-1} , {-1,0} , {-1, 1},
+            {0, -1} ,   {0, 1},
+            {1 ,-1} , {1, 0} , {1 , 1}
         };
 
-        unordered_map<int, bool> visited;
-        queue<tuple<int, int, int>> q;
+        qD.push({n-1, n- 1});
+        disD[n-1][n-1] = 1;
 
-        if (grid[0][0] == 1) return -1;
+        while(!qS.empty() && !qD.empty()){
+            bool preferSource = qS.size() <= qD.size();
 
-        q.push({0, 0, 1});
-        visited[0] = true;
+            queue<pair<int,int>>& q = preferSource ? qS : qD;
+            vector<vector<int>> &dis = preferSource ? disS: disD; 
+            vector<vector<int>> &other = preferSource ? disD: disS;
+            int sz = q.size();
 
-        while (!q.empty()) {
-            auto [x, y, len] = q.front();
-            q.pop();
+            while(sz--){
+                int x = q.front().first;
+                int y = q.front().second;
+                q.pop();
 
-            if (x == n - 1 && y == m - 1) {
-                return len;
-            }
-
-            for (auto [dx, dy] : dirs) {
-                int nx = x + dx;
-                int ny = y + dy;
-
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
-                    continue;
+                if(other[x][y] != 1e9){
+                    return dis[x][y] + other[x][y] - 1;
                 }
 
-                if (grid[nx][ny] == 1) continue;
+                for(auto &d: dir){
+                    int dx = x + d[0];
+                    int dy = y + d[1];
 
-                int idx = nx * m + ny;
+                    if(dx >= 0 && dx < n && dy >= 0 && dy < n && grid[dx][dy] == 0){
+                        if(dis[dx][dy] == 1e9){
+                            dis[dx][dy] = dis[x][y] + 1;
+                            q.push({dx , dy});
+                        }
 
-                if (visited[idx]) continue;
-
-                visited[idx] = true;
-                q.push({nx, ny, len + 1});
+                        if(other[dx][dy] != 1e9){
+                            return other[dx][dy] + dis[dx][dy] - 1;
+                        }
+                    }
+                }
             }
         }
-
         return -1;
     }
 };
